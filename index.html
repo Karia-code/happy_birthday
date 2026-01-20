@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Surprise | Glassmorphism Edition</title>
+    <style>
+        :root {
+            --primary-math: #a855f7;
+            --primary-cat: #fb7185;
+            --bg-dark: #030712;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.8s ease;
+            position: relative;
+        }
+
+        /* ==================== 動態流體背景 (Aurora) ==================== */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            filter: blur(120px);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            animation: moveBlob 20s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            top: -10%;
+            left: -10%;
+            background: var(--primary-math);
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 350px;
+            height: 350px;
+            bottom: -10%;
+            right: -10%;
+            background: #3b82f6;
+            animation-delay: -5s;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            background: #ec4899;
+            animation-delay: -10s;
+        }
+
+        @keyframes moveBlob {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-50px, 50px) scale(0.9);
+            }
+        }
+
+        /* ==================== 玻璃卡片 ==================== */
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 48px 32px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* ==================== 標題與名字 ==================== */
+        .title-section {
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .name {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--primary-math), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.5s ease;
+        }
+
+        /* ==================== 遊戲區塊 ==================== */
+        .game-zone {
+            margin: 32px 0;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            transition: all 0.5s ease;
+        }
+
+        .game-hint {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .target-box {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-math);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .choice-item {
+            width: 65px;
+            height: 65px;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            font-size: 1.8rem;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-math), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .choice-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            border-color: var(--primary-math);
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .choice-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .choice-item:active {
+            transform: scale(0.95);
+        }
+
+        /* ==================== 祝福文字 ==================== */
+        .message-box {
+            margin: 32px 0;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .message-box.unlocked {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .message-text {
+            font-size: 1.05rem;
+            color: #cbd5e1;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+            white-space: pre-line;
+        }
+
+        /* ==================== 裝飾標籤 ==================== */
+        .decor-tag {
+            margin-top: 24px;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== 按鈕 ==================== */
+        .btn-container {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            padding: 14px 32px;
+            border-radius: 100px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-math), #60a5fa);
+            color: white;
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(168, 85, 247, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-switch {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            font-size: 0.85rem;
+        }
+
+        .btn-switch:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary-math);
+        }
+
+        /* ==================== Canvas 煙火 ==================== */
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ==================== 震動動畫 ==================== */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* ==================== 主題切換 ==================== */
+        body.theme-cat .blob1 {
+            background: var(--primary-cat);
+        }
+
+        body.theme-cat .blob2 {
+            background: #f472b6;
+        }
+
+        body.theme-cat .name {
+            background: linear-gradient(135deg, var(--primary-cat), #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.theme-cat .target-box {
+            color: var(--primary-cat);
+        }
+
+        body.theme-cat .choice-item:hover {
+            border-color: var(--primary-cat);
+            box-shadow: 0 8px 20px rgba(251, 113, 133, 0.4);
+        }
+
+        body.theme-cat .choice-item::before {
+            background: linear-gradient(135deg, var(--primary-cat), transparent);
+        }
+
+        body.theme-cat .btn-primary {
+            background: linear-gradient(135deg, var(--primary-cat), #f472b6);
+            box-shadow: 0 8px 20px rgba(251, 113, 133, 0.4);
+        }
+
+        body.theme-cat .btn-primary:hover {
+            box-shadow: 0 12px 28px rgba(251, 113, 133, 0.6);
+        }
+
+        body.theme-cat .btn-switch:hover {
+            border-color: var(--primary-cat);
+        }
+
+        /* ==================== RWD ==================== */
+        @media (min-width: 768px) {
+            .card {
+                max-width: 480px;
+                padding: 56px 40px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .name {
+                font-size: 3.2rem;
+            }
+
+            .target-box {
+                font-size: 2rem;
+            }
+
+            .choice-item {
+                width: 75px;
+                height: 75px;
+                font-size: 2rem;
+            }
+        }
+
+        /* ==================== 載入動畫 ==================== */
+        @keyframes cardEntry {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card {
+            animation: cardEntry 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+    </style>
+</head>
+<body class="theme-math" id="bodyElement">
+    <!-- 動態流體背景 -->
+    <div class="aurora">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+    </div>
+
+    <!-- Canvas 煙火特效 -->
+    <canvas id="confetti"></canvas>
+
+    <!-- 主卡片 -->
+    <div class="card" id="card">
+        <!-- 標題區 -->
+        <div class="title-section">
+            <h1>Happy Birthday</h1>
+            <div class="name" id="nameDisplay"></div>
+        </div>
+
+        <!-- 遊戲區 -->
+        <div class="game-zone" id="gameZone">
+            <div class="game-hint" id="gameHint"></div>
+            <div class="target-box" id="targetDisplay"></div>
+            <div class="choices" id="choicesDisplay"></div>
+        </div>
+
+        <!-- 祝福文字 -->
+        <div class="message-box" id="messageBox">
+            <div class="message-text" id="messageText"></div>
+        </div>
+
+        <!-- 裝飾標籤 -->
+        <div class="decor-tag" id="decorTag"></div>
+
+        <!-- 按鈕 -->
+        <div class="btn-container">
+            <button class="btn-primary" onclick="runMagic()" id="magicBtn">
+                ✨ 再撒一次祝福
+            </button>
+            <button class="btn-switch" onclick="toggleTheme()" id="switchBtn">
+                切換至貓咪設計師版
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 設定區 ====================
+        const config = {
+            math: {
+                name: '周豬豬',
+                message: '這是一個機率為 1 的必然事件：\n妳今天會過得很開心！🎉\n\n願妳在 2026 的函數裡，\n只有增長沒有衰減，\n幸福的極值無限大！',
+                gameHint: '解開這個式子，妳就會得到今年的幸福通解 ✨',
+                decorTag: 'Maximize Joy { t ∈ [2026, ∞) }',
+                color: '#a855f7',
+                gameType: 'math'
+            },
+            cat: {
+                name: '庭慈姐姐',
+                message: '妳的可愛程度已超過系統預設的 CSS 上限！😻\n\n給最頂尖的設計師與最可愛的姊姊：\n願妳靈感永不枯竭，\n每個 Pixel 都閃耀著幸福的光芒 🐾',
+                gameHint: '點擊毛線球，捕捉今天的設計靈感（或是貓毛）🧶',
+                decorTag: 'Fill: #HEART-FF | Stroke: #JOY | Opacity: 1.0',
+                color: '#fb7185',
+                gameType: 'cat'
+            }
+        };
+
+        let currentTheme = 'math';
+        let isUnlocked = false;
+
+        // ==================== 初始化 ====================
+        function init() {
+            const data = config[currentTheme];
+            
+            // 更新內容
+            document.getElementById('nameDisplay').textContent = data.name;
+            document.getElementById('messageText').textContent = data.message;
+            document.getElementById('gameHint').textContent = data.gameHint;
+            document.getElementById('decorTag').textContent = data.decorTag;
+            
+            // 更新切換按鈕
+            document.getElementById('switchBtn').textContent = 
+                currentTheme === 'math' ? '切換至貓咪設計師版' : '切換至理性數學版';
+            
+            // 重置狀態
+            isUnlocked = false;
+            document.getElementById('messageBox').classList.remove('unlocked');
+            document.getElementById('gameZone').style.display = 'block';
+            
+            // 設置遊戲
+            setupGame();
+        }
+
+        // ==================== 遊戲設置 ====================
+        function setupGame() {
+            const targetDisplay = document.getElementById('targetDisplay');
+            const choicesDisplay = document.getElementById('choicesDisplay');
+            choicesDisplay.innerHTML = '';
+
+            if (currentTheme === 'math') {
+                // 數學遊戲
+                const a = Math.floor(Math.random() * 20) + 10;
+                const b = Math.floor(Math.random() * 15) + 5;
+                const answer = a + b;
+                
+                targetDisplay.textContent = `${a} + ${b} = ?`;
+                
+                const options = [answer, answer + 3, answer - 2]
+                    .sort(() => Math.random() - 0.5);
+                
+                options.forEach(opt => {
+                    const btn = document.createElement('div');
+                    btn.className = 'choice-item';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(opt === answer);
+                    choicesDisplay.appendChild(btn);
+                });
+                
+            } else {
+                // 貓咪遊戲
+                targetDisplay.textContent = '找到隱藏的貓 🐈';
+                
+                const options = ['🧶', '🐈', '🎨']
+                    .sort(() => Math.random() - 0.5);
+                
+                options.forEach(opt => {
+                    const btn = document.createElement('div');
+                    btn.className = 'choice-item';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(opt === '🐈');
+                    choicesDisplay.appendChild(btn);
+                });
+            }
+        }
+
+        // ==================== 檢查答案 ====================
+        function checkAnswer(correct) {
+            vibrate();
+            
+            if (correct) {
+                unlockMessage();
+            } else {
+                const card = document.getElementById('card');
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 500);
+            }
+        }
+
+        // ==================== 解鎖祝福 ====================
+        function unlockMessage() {
+            isUnlocked = true;
+            
+            // 隱藏遊戲區
+            const gameZone = document.getElementById('gameZone');
+            gameZone.style.opacity = '0';
+            gameZone.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                gameZone.style.display = 'none';
+                document.getElementById('messageBox').classList.add('unlocked');
+                startConfetti();
+            }, 300);
+        }
+
+        // ==================== 主題切換 ====================
+        function toggleTheme() {
+            vibrate();
+            currentTheme = currentTheme === 'math' ? 'cat' : 'math';
+            document.getElementById('bodyElement').className = `theme-${currentTheme}`;
+            
+            const card = document.getElementById('card');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'cardEntry 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+            
+            init();
+        }
+
+        // ==================== 再撒一次祝福 ====================
+        function runMagic() {
+            vibrate();
+            if (isUnlocked) {
+                startConfetti();
+            } else {
+                init();
+            }
+        }
+
+        // ==================== Canvas 煙火特效 ====================
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function startConfetti() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const color = config[currentTheme].color;
+            const particleCount = 60;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12,
+                    color: color,
+                    size: Math.random() * 6 + 3,
+                    alpha: 1
+                });
+            }
+            
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            if (particles.length === 0) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15; // 重力
+                p.alpha -= 0.008;
+                
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (p.alpha <= 0 || p.y > canvas.height) {
+                    particles.splice(i, 1);
+                }
+            });
+            
+            requestAnimationFrame(animateConfetti);
+        }
+
+        // ==================== 震動反饋 ====================
+        function vibrate() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(10);
+            }
+        }
+
+        // ==================== 頁面載入 ====================
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
