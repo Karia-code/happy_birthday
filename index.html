@@ -9,10 +9,15 @@
             --primary-math: #0ea5e9;
             --secondary-math: #06b6d4;
             --accent-math: #3b82f6;
-            --primary-cat: #fb7185;
+            --primary-cat: #ff6b9d;
+            --secondary-cat: #ffa8c5;
+            --accent-cat: #c084fc;
             --bg-dark: #030712;
+            --bg-pink: #ffeef8;
             --glass: rgba(255, 255, 255, 0.05);
+            --glass-pink: rgba(255, 255, 255, 0.35);
             --border: rgba(255, 255, 255, 0.15);
+            --border-pink: rgba(255, 182, 193, 0.3);
         }
 
         * {
@@ -364,17 +369,40 @@
             animation: shake 0.5s ease-in-out;
         }
 
-        /* ==================== 主題切換 ==================== */
+        /* ==================== 主題切換 - 可愛粉色設計師風格 ==================== */
+        body.theme-cat {
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe4f1 50%, #ffd8eb 100%);
+        }
+
+        body.theme-cat .aurora {
+            display: none;
+        }
+
+        body.theme-cat .card {
+            background: var(--glass-pink);
+            border: 2px solid var(--border-pink);
+            box-shadow: 0 25px 50px -12px rgba(255, 107, 157, 0.3),
+                        0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+                        8px 8px 0 rgba(255, 182, 193, 0.15);
+        }
+
         body.theme-cat .blob1 {
             background: var(--primary-cat);
         }
 
         body.theme-cat .blob2 {
-            background: #f472b6;
+            background: var(--secondary-cat);
         }
 
         body.theme-cat .name {
-            background: linear-gradient(135deg, var(--primary-cat), #f472b6);
+            background: linear-gradient(135deg, var(--primary-cat), var(--accent-cat));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.theme-cat h1 {
+            background: linear-gradient(to right, rgba(255, 107, 157, 0.9), rgba(192, 132, 252, 0.7));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -384,26 +412,112 @@
             color: var(--primary-cat);
         }
 
+        body.theme-cat .choice-item {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--border-pink);
+        }
+
         body.theme-cat .choice-item:hover {
             border-color: var(--primary-cat);
-            box-shadow: 0 8px 20px rgba(251, 113, 133, 0.4);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+            background: rgba(255, 255, 255, 0.8);
         }
 
         body.theme-cat .choice-item::before {
             background: linear-gradient(135deg, var(--primary-cat), transparent);
         }
 
+        body.theme-cat .game-zone {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px dashed var(--border-pink);
+        }
+
+        body.theme-cat .message-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 230, 240, 0.5));
+            border: 2px solid var(--border-pink);
+        }
+
+        body.theme-cat .message-text {
+            color: #4a1942;
+        }
+
+        body.theme-cat .decor-tag {
+            background: rgba(255, 230, 240, 0.6);
+            border: 2px solid var(--border-pink);
+            color: var(--primary-cat);
+        }
+
         body.theme-cat .btn-primary {
-            background: linear-gradient(135deg, var(--primary-cat), #f472b6);
-            box-shadow: 0 8px 20px rgba(251, 113, 133, 0.4);
+            background: linear-gradient(135deg, var(--primary-cat), var(--accent-cat));
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5),
+                        4px 4px 0 rgba(192, 132, 252, 0.3);
         }
 
         body.theme-cat .btn-primary:hover {
-            box-shadow: 0 12px 28px rgba(251, 113, 133, 0.6);
+            box-shadow: 0 12px 28px rgba(255, 107, 157, 0.7),
+                        5px 5px 0 rgba(192, 132, 252, 0.4);
+            transform: translateY(-3px);
+        }
+
+        body.theme-cat .btn-switch {
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--primary-cat);
+            border: 2px solid var(--border-pink);
         }
 
         body.theme-cat .btn-switch:hover {
             border-color: var(--primary-cat);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 網格背景 (設計師主題) */
+        body.theme-cat::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 182, 193, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 182, 193, 0.12) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ==================== 可愛裝飾元素 ==================== */
+        .cute-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        body.theme-cat .cute-decorations {
+            opacity: 1;
+        }
+
+        .cute-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: floatCute 4s infinite ease-in-out;
+            filter: drop-shadow(2px 2px 4px rgba(255, 107, 157, 0.3));
+        }
+
+        .cute-icon:nth-child(1) { top: 8%; left: 5%; animation-delay: 0s; }
+        .cute-icon:nth-child(2) { top: 15%; right: 8%; animation-delay: -1s; }
+        .cute-icon:nth-child(3) { bottom: 12%; left: 8%; animation-delay: -2s; }
+        .cute-icon:nth-child(4) { bottom: 20%; right: 6%; animation-delay: -3s; }
+
+        @keyframes floatCute {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
 
         /* ==================== 數學符號裝飾 ==================== */
@@ -512,6 +626,14 @@
         <div class="math-symbol">∞</div>
         <div class="math-symbol">∂</div>
         <div class="math-symbol">≈</div>
+    </div>
+
+    <!-- 可愛裝飾元素 (僅設計師主題) -->
+    <div class="cute-decorations">
+        <div class="cute-icon">💖</div>
+        <div class="cute-icon">⭐</div>
+        <div class="cute-icon">📁</div>
+        <div class="cute-icon">✨</div>
     </div>
 
     <!-- 主卡片 -->
